@@ -1,9 +1,9 @@
+mod assets;
 mod camera;
-mod resources;
 
 use bevy::prelude::*;
 
-use self::{camera::CameraPlugin, resources::ResourcePlugin};
+use self::{assets::AssetPlugin, camera::CameraPlugin};
 
 pub fn run() {
     App::new()
@@ -18,6 +18,6 @@ pub fn run() {
                     ..default()
                 }),
         )
-        .add_plugins((CameraPlugin, ResourcePlugin))
+        .add_plugins((CameraPlugin, AssetPlugin))
         .run();
 }

@@ -5,9 +5,9 @@ use bevy::prelude::*;
 
 use self::{terrain::Terrain, tileset::Tileset};
 
-pub struct ResourcePlugin;
+pub struct AssetPlugin;
 
-impl Plugin for ResourcePlugin {
+impl Plugin for AssetPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, Terrain::load);
     }
