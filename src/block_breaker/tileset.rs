@@ -5,7 +5,7 @@ where
     Self: Sized + Resource,
 {
     const PATH: &'static str;
-    const TILE_SIZE: Vec2;
+    const TILE_SIZE: usize;
     const COLUMNS: usize;
     const ROWS: usize;
 
@@ -19,7 +19,7 @@ where
         let tileset = asset_server.load(Self::PATH);
         let tileset = TextureAtlas::from_grid(
             tileset,
-            Self::TILE_SIZE,
+            Vec2::splat(Self::TILE_SIZE as f32),
             Self::COLUMNS,
             Self::ROWS,
             None,

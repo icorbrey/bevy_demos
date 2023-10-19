@@ -1,4 +1,5 @@
 mod camera;
+mod coordinate;
 mod tileset;
 mod wall;
 
