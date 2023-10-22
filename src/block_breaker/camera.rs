@@ -8,6 +8,6 @@ impl Plugin for CameraPlugin {
     }
 }
 
-pub fn spawn_camera(mut commands: Commands) {
+fn spawn_camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
 }

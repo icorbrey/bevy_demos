@@ -1,61 +1,8 @@
 use bevy::prelude::*;
 
-use super::{coordinate::Coordinate, tileset::Tileset};
+use super::sprite_sheets::SpriteSheets;
 
-const WALL_SIZE: (i32, i32) = (24, 16);
-
-pub struct WallPlugin;
-
-impl Plugin for WallPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Startup, (WallAsset::load, BackgroundAsset::load))
-            .add_systems(Update, spawn_walls);
-    }
-}
-
-fn spawn_walls(
-    mut commands: Commands,
-    wall_asset: Res<WallAsset>,
-    background_asset: Res<BackgroundAsset>,
-) {
-    let (w, h) = WALL_SIZE;
-
-    let top = h / 2;
-    let left = -w / 2;
-    let right = w / 2;
-    let bottom = -h / 2;
-
-    for x in (left + 1)..right {
-        commands.spawn(wall_asset.tile(WallTile::Horizontal, Coordinate::new(x, top)));
-        commands.spawn(wall_asset.tile(WallTile::Horizontal, Coordinate::new(x, bottom)));
-    }
-
-    for y in (bottom + 1)..top {
-        commands.spawn(wall_asset.tile(WallTile::Vertical, Coordinate::new(left, y)));
-        commands.spawn(wall_asset.tile(WallTile::Vertical, Coordinate::new(right, y)));
-    }
-
-    for x in (left + 1)..right {
-        for y in (bottom + 1)..top {
-            commands.spawn(SpriteBundle {
-                texture: background_asset.0.clone(),
-                transform: Transform::from_translation(
-                    Coordinate::<32>::new(x, y).into_vec2().extend(0.0),
-                ),
-                ..default()
-            });
-        }
-    }
-
-    commands.spawn_batch(vec![
-        wall_asset.tile(WallTile::TopLeft, Coordinate::new(left, top)),
-        wall_asset.tile(WallTile::TopRight, Coordinate::new(right, top)),
-        wall_asset.tile(WallTile::BottomRight, Coordinate::new(right, bottom)),
-        wall_asset.tile(WallTile::BottomLeft, Coordinate::new(left, bottom)),
-    ]);
-}
-
-pub enum WallTile {
+enum Wall {
     Vertical,
     Horizontal,
     TopLeft,
@@ -64,50 +11,50 @@ pub enum WallTile {
     BottomLeft,
 }
 
-#[derive(Resource)]
-pub struct WallAsset(pub Handle<TextureAtlas>);
-
-impl WallAsset {
-    pub fn tile(
-        &self,
-        tile: WallTile,
-        coordinate: Coordinate<{ WallAsset::TILE_SIZE }>,
-    ) -> SpriteSheetBundle {
-        SpriteSheetBundle {
-            sprite: TextureAtlasSprite {
-                index: match tile {
-                    WallTile::Vertical => 0,
-                    WallTile::Horizontal => 1,
-                    WallTile::TopLeft => 2,
-                    WallTile::TopRight => 3,
-                    WallTile::BottomRight => 4,
-                    WallTile::BottomLeft => 5,
-                },
-                ..default()
+pub fn spawn_walls<const WIDTH: i32, const HEIGHT: i32>(
+    sprite_sheets: Res<SpriteSheets>,
+    mut commands: Commands,
+) {
+    let wall = |variant, x, y| SpriteSheetBundle {
+        transform: Transform::from_translation(Vec3::new(32.0 * x as f32, 32.0 * y as f32, 0.0)),
+        texture_atlas: sprite_sheets.walls.clone(),
+        sprite: TextureAtlasSprite {
+            index: match variant {
+                Wall::Vertical => 0,
+                Wall::Horizontal => 1,
+                Wall::TopLeft => 2,
+                Wall::TopRight => 3,
+                Wall::BottomRight => 4,
+                Wall::BottomLeft => 5,
             },
-            texture_atlas: self.0.clone(),
-            transform: Transform::from_translation(coordinate.into_vec2().extend(0.0)),
             ..default()
-        }
+        },
+        ..default()
+    };
+
+    let top = HEIGHT / 2;
+    let left = -WIDTH / 2 - 1;
+    let right = WIDTH / 2;
+    let bottom = -HEIGHT / 2 - 1;
+
+    for x in (left + 1)..right {
+        commands.spawn_batch(vec![
+            wall(Wall::Horizontal, x, top),
+            wall(Wall::Horizontal, x, bottom),
+        ]);
     }
-}
 
-impl Tileset for WallAsset {
-    const PATH: &'static str = "tilesets/block-breaker-wall.png";
-    const TILE_SIZE: usize = 32;
-    const COLUMNS: usize = 3;
-    const ROWS: usize = 2;
-
-    fn new(tileset: Handle<TextureAtlas>) -> Self {
-        Self(tileset)
+    for y in (bottom + 1)..top {
+        commands.spawn_batch(vec![
+            wall(Wall::Vertical, left, y),
+            wall(Wall::Vertical, right, y),
+        ]);
     }
-}
 
-#[derive(Resource)]
-pub struct BackgroundAsset(pub Handle<Image>);
-
-impl BackgroundAsset {
-    pub fn load(mut commands: Commands, asset_server: Res<AssetServer>) {
-        commands.insert_resource(Self(asset_server.load("sprites/block-breaker-bg.png")));
-    }
+    commands.spawn_batch(vec![
+        wall(Wall::TopLeft, left, top),
+        wall(Wall::TopRight, right, top),
+        wall(Wall::BottomRight, right, bottom),
+        wall(Wall::BottomLeft, left, bottom),
+    ])
 }
