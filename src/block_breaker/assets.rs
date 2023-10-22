@@ -45,7 +45,7 @@ impl AssetManager {
         }
     }
 
-    pub fn load(&mut self, asset_server: Res<AssetServer>, path: &str) -> Handle<Image> {
+    pub fn load(&mut self, asset_server: &Res<AssetServer>, path: &str) -> Handle<Image> {
         let handle = asset_server.load(path);
         self.handles.push(handle.clone_untyped());
         handle

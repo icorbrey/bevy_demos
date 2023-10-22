@@ -14,8 +14,8 @@ impl SpriteSheets {
         asset_server: Res<AssetServer>,
         mut commands: Commands,
     ) {
-        let load = |path, size, w, h| {
-            let tileset = asset_manager.load(asset_server, path);
+        let mut load = |path, size, w, h| {
+            let tileset = asset_manager.load(&asset_server, path);
             let size = Vec2::splat(size as f32);
             let tileset = TextureAtlas::from_grid(tileset, size, w, h, None, None);
             texture_atlasses.add(tileset)
