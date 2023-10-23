@@ -1,6 +1,7 @@
 mod arena;
 mod assets;
 mod background;
+mod ball;
 mod camera;
 mod spawn;
 mod sprite_sheets;
@@ -10,8 +11,8 @@ mod wall;
 use bevy::prelude::*;
 
 use self::{
-    arena::ArenaPlugin, assets::AssetPlugin, background::BackgroundPlugin, camera::CameraPlugin,
-    spawn::SpawnPlugin, wall::WallsPlugin,
+    arena::ArenaPlugin, assets::AssetPlugin, background::BackgroundPlugin, ball::BallsPlugin,
+    camera::CameraPlugin, spawn::SpawnPlugin, wall::WallsPlugin,
 };
 
 #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, States)]
@@ -29,6 +30,7 @@ pub fn run() {
         .add_plugins(CameraPlugin)
         .add_plugins(ArenaPlugin)
         .add_plugins(AssetPlugin)
+        .add_plugins(BallsPlugin)
         .add_plugins(SpawnPlugin)
         .add_plugins(WallsPlugin)
         .run()

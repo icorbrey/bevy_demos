@@ -12,6 +12,7 @@ impl Plugin for SpawnPlugin {
 
 #[derive(Event)]
 pub enum SpawnEvent {
-    Wall(WallVariant, i32, i32),
+    Ball(Vec2, Vec2),
     Background(i32, i32),
+    Wall(WallVariant, i32, i32),
 }

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::{spawn::SpawnEvent, sprite_sheets::SpriteSheets};
+use super::{spawn::SpawnEvent, sprites::Sprites};
 
 pub struct WallsPlugin;
 
@@ -12,22 +12,18 @@ impl Plugin for WallsPlugin {
 
 pub fn spawn_wall(
     mut ev_spawn: EventReader<SpawnEvent>,
-    sprite_sheets: Res<SpriteSheets>,
+    sprites: Res<Sprites>,
     mut commands: Commands,
 ) {
     for ev in ev_spawn.iter() {
-        if let SpawnEvent::Wall(variant, x, y) = ev {
-            commands.spawn(SpriteSheetBundle {
+        if let SpawnEvent::Wall(_, x, y) = ev {
+            commands.spawn(SpriteBundle {
                 transform: Transform::from_translation(Vec3::new(
-                    32.0 * *x as f32,
-                    32.0 * *y as f32,
+                    32.0 * *x as f32 + 48.0,
+                    32.0 * *y as f32 + 48.0,
                     0.0,
                 )),
-                texture_atlas: sprite_sheets.walls.clone(),
-                sprite: TextureAtlasSprite {
-                    index: (*variant).into(),
-                    ..default()
-                },
+                texture: sprites.test_orange.clone(),
                 ..default()
             });
         }

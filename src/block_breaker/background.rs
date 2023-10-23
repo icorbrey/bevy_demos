@@ -18,10 +18,10 @@ pub fn spawn_background(
     for ev in ev_spawn.iter() {
         if let SpawnEvent::Background(x, y) = ev {
             commands.spawn(SpriteBundle {
-                texture: sprites.background.clone(),
+                texture: sprites.test_grey.clone(),
                 transform: Transform::from_translation(Vec3::new(
-                    32.0 * *x as f32,
-                    32.0 * *y as f32,
+                    32.0 * *x as f32 + 48.0,
+                    32.0 * *y as f32 + 48.0,
                     0.0,
                 )),
                 ..default()

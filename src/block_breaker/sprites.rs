@@ -6,6 +6,8 @@ use super::assets::AssetManager;
 pub struct Sprites {
     pub background: Handle<Image>,
     pub ball: Handle<Image>,
+    pub test_grey: Handle<Image>,
+    pub test_orange: Handle<Image>,
 }
 
 impl Sprites {
@@ -19,6 +21,8 @@ impl Sprites {
         commands.insert_resource(Self {
             background: load("sprites/block-breaker-bg.png"),
             ball: load("sprites/block-breaker-ball.png"),
+            test_grey: load("sprites/test-32x32-grey.png"),
+            test_orange: load("sprites/test-32x32-orange.png"),
         })
     }
 }
